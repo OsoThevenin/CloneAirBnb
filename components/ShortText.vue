@@ -1,7 +1,7 @@
 <template>
   <span>{{ displayText }}
-    <button v-if="isTooLong && !isExpand" @click="isExpanded = true" class="link" type="button">read more</button>
-    <button v-if="isTooLong && isExpand" @click="isExpanded = false" class="link" type="button">read less</button>
+    <button v-if="isTooLong && !isExpanded" @click="isExpanded = true" class="link" type="button">read more</button>
+    <button v-if="isTooLong && isExpanded" @click="isExpanded = false" class="link" type="button">read less</button>
   </span>
 </template>
 

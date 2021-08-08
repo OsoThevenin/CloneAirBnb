@@ -1,25 +1,32 @@
 import cookie from "cookie";
 import { OAuth2Client } from "google-auth-library";
 
-export default function() {
+export default function () {
   const authConfig = this.options.publicRuntimeConfig.auth;
 
   this.nuxt.hook("render:setupMiddleware", (app) => {
     app.use("/api", handler);
   });
 
+  this.nuxt.hook('render:setupMiddleware', (app) => {
+    app.use('/admin', (req, res, next) => {
+      res.spa = true
+      next()
+    })
+  })
+
   async function handler(req, res, next) {
     const idToken = cookie.parse(req.headers.cookie)[authConfig.cookieName];
     if (!idToken) rejectHit(res)
 
     const ticket = await getUser(idToken)
-    if(!ticket) rejectHit(res)
+    if (!ticket) rejectHit(res)
 
     req.identity = {
-        id: ticket.sub,
-        email: ticket.email,
-        name: ticket.name,
-        image: ticket.picture,
+      id: ticket.sub,
+      email: ticket.email,
+      name: ticket.name,
+      image: ticket.picture,
     }
     next();
   }
@@ -38,7 +45,7 @@ export default function() {
   }
 
   function rejectHit(res) {
-      res.statusCode = 401
-      res.end()
+    res.statusCode = 401
+    res.end()
   }
 }

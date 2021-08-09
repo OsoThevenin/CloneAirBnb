@@ -5,7 +5,8 @@
     "cookie": "^0.4.1",
     "google-auth-library": "^7.5.0",
     "js-cookie": "^3.0.0",
-    "nuxt": "^2.15.7"
+    "nuxt": "^2.15.7",
+    "uuid": "^8.3.2"
   },
   "scripts": {
     "dev": "nuxt",

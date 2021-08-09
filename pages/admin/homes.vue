@@ -1,6 +1,8 @@
 <template>
   <div>
-    [LIST OF HOMES HERE]
+    <span v-for="home in homeList" :key="home.objectID">
+      {{ home.title }}: <button class="text-red-800">Delete</button><br />
+    </span>
     <h2 class="text-xl bold">Add a Home</h2>
     <form class="form" @submit.prevent="onSubmit">
       Images:<br />
@@ -28,8 +30,14 @@
       <input type="number" v-model="home.bedrooms" class="w-14" /><br />
       <input type="number" v-model="home.beds" class="w-14" /><br />
       <input type="number" v-model="home.bathrooms" class="w-14" /><br />
-      
-      <input type="text" ref="locationSelector" autocomplete="off" placeholder="Select a location" @changed="changed" />
+
+      <input
+        type="text"
+        ref="locationSelector"
+        autocomplete="off"
+        placeholder="Select a location"
+        @changed="changed"
+      />
       Address:
       <input type="text" v-model="home.location.address" class="w-60" /><br />
       City:
@@ -50,9 +58,12 @@
 </template>
 
 <script>
+import { unWrap } from "~/utils/fetchUtils";
+
 export default {
   data() {
     return {
+      homeList: [],
       home: {
         title: "",
         description: "",
@@ -71,46 +82,57 @@ export default {
           country: "",
         },
         _geoloc: {
-          lat: '',
-          lng: '',
+          lat: "",
+          lng: "",
         },
         images: [],
       },
     };
   },
   mounted() {
-    this.$maps.makeAutoComplete(this.$refs.locationSelector, ['address'])
+    this.$maps.makeAutoComplete(this.$refs.locationSelector, ["address"]);
+    this.setHomesList();
   },
   methods: {
-    imageUpdated(imageUrl, index){
-        this.home.images[index] = imageUrl
+    imageUpdated(imageUrl, index) {
+      this.home.images[index] = imageUrl;
     },
-    changed(event){
-      const addressParts = event.detail.address_components
-      const street = this.getAddressPart(addressParts, 'street_number')?.short_name || ''
-      const route = this.getAddressPart(addressParts, 'route')?.short_name || ''
-      this.home.location.address = street + ' ' + route
+    changed(event) {
+      const addressParts = event.detail.address_components;
+      const street =
+        this.getAddressPart(addressParts, "street_number")?.short_name || "";
+      const route =
+        this.getAddressPart(addressParts, "route")?.short_name || "";
+      this.home.location.address = street + " " + route;
 
-      this.home.location.city = this.getAddressPart(addressParts, 'locality')?.short_name || ''
-      this.home.location.state = this.getAddressPart(addressParts, 'administrative_area_level_1')?.long_name || ''
-      this.home.location.country = this.getAddressPart(addressParts, 'country')?.short_name || ''
-      this.home.location.postalCode = this.getAddressPart(addressParts, 'postal_code')?.short_name || ''
+      this.home.location.city =
+        this.getAddressPart(addressParts, "locality")?.short_name || "";
+      this.home.location.state =
+        this.getAddressPart(addressParts, "administrative_area_level_1")
+          ?.long_name || "";
+      this.home.location.country =
+        this.getAddressPart(addressParts, "country")?.short_name || "";
+      this.home.location.postalCode =
+        this.getAddressPart(addressParts, "postal_code")?.short_name || "";
 
-      const geo = event.detail.geometry.location
-      this.home._geoloc.lat = geo.lat()
-      this.home._geoloc.lng = geo.lng()
+      const geo = event.detail.geometry.location;
+      this.home._geoloc.lat = geo.lat();
+      this.home._geoloc.lng = geo.lng();
     },
-    getAddressPart(parts, type){
-      return parts.find(part => part.types.includes(type))
+    getAddressPart(parts, type) {
+      return parts.find((part) => part.types.includes(type));
     },
     async onSubmit() {
-        await fetch('/api/homes', {
-            method: 'POST',
-            body: JSON.stringify(this.home),
-            headers: {
-                'Content-Type': 'application/json', 
-            },
-        })
+      await fetch("/api/homes", {
+        method: "POST",
+        body: JSON.stringify(this.home),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
+    async setHomesList() {
+      this.homeList = (await unWrap(await fetch("/api/homes/user/"))).json;
     },
   },
 };

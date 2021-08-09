@@ -23,10 +23,15 @@ export default {
     "~/plugins/auth.client",
   ],
   modules: ['~/modules/auth', '~/modules/algolia', '~/modules/cloudinary', "@nuxtjs/cloudinary"],
-  buildModules: ["@nuxtjs/tailwindcss"],
+  buildModules: ["@nuxtjs/tailwindcss", "@nuxt/image"],
   cloudinary: {
     cloudName: 'dlvju6d8g',
 
+  },
+  image: {
+    cloudinary: {
+      baseURL: 'https://res.cloudinary.com/dlvju6d8g/image/upload/'
+    }
   },
   css: ["~/assets/sass/app.scss"],
   build: {

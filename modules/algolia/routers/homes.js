@@ -7,15 +7,15 @@ export default (apis) => {
             if (hasBadBody(req)) {
                 return rejectHitBadRequest(res)
             }
-            await createHome(req.identity, req.body, res)
+            await createHome(req.identity.id, req.body, res)
             return
         }
         rejectHitBadRequest(res)
     }
 
-    async function createHome(identity, body, res) {
+    async function createHome(userId, body, res) {
         const homeId = uuidv4()
-        const payload = { ...body, reviewCount: 0, reviewValue: 0, userId: identity.id }
+        const payload = { ...body, reviewCount: 0, reviewValue: 0, userId }
 
         const resp = await apis.homes.create(homeId, payload)
 
@@ -24,6 +24,7 @@ export default (apis) => {
             res.send()
             return
         }
+        await apis.user.assignHome(userId, homeId)
         sendJSON({}, res)
     }
 }

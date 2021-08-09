@@ -6,11 +6,17 @@ export default (algoliaConfig) => {
     const headers = getHeaders(algoliaConfig)
 
     return {
-        create: async (identity, payload) => {
+        assignHome: async function(userId, homeId) {
+            const payload = (await this.getById(userId)).json
+
+            payload.homeId.push(homeId)
+            this.create(userId, payload)
+        },
+        create: async (userId, payload) => {
             try {
                 return unWrap(
                     await fetch(
-                        `https://${algoliaConfig.APPLICATION_ID}-dsn.algolia.net/1/indexes/nuxtbnb_users/${identity.id}`,
+                        `https://${algoliaConfig.APPLICATION_ID}-dsn.algolia.net/1/indexes/nuxtbnb_users/${userId}`,
                         {
                             headers,
                             method: "PUT",

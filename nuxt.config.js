@@ -22,8 +22,12 @@ export default {
     "~/plugins/dataApi",
     "~/plugins/auth.client",
   ],
-  modules: ['~/modules/auth', '~/modules/algolia'],
+  modules: ['~/modules/auth', '~/modules/algolia', '~/modules/cloudinary', "@nuxtjs/cloudinary"],
   buildModules: ["@nuxtjs/tailwindcss"],
+  cloudinary: {
+    cloudName: 'dlvju6d8g',
+
+  },
   css: ["~/assets/sass/app.scss"],
   build: {
     extractCSS: true,
@@ -40,11 +44,17 @@ export default {
       APPLICATION_ID: "T2OKKX09II",
       API_KEY: "1958c90625c59344dc055a3dddf1a550"
     },
+    cloudinary: {
+      API_KEY: "237921354725786",
+    }
   },
   privateRuntimeConfig: {
     algolia: {
       APPLICATION_ID: "T2OKKX09II",
       API_KEY: "55abaa55819243489563ecbbdbdcf036",
     },
+    cloudinary: {
+      API_SECRET: "aVrfGElM15G2qzfLtmqpUaVFe-0",
+    }
   },
 }

@@ -12,13 +12,21 @@
   </div>
 </template>
 <script>
-import homes from "~/data/homes";
-
 export default {
-  data() {
+  head(){
     return {
-      homes: homes.slice(0, 3),
-    };
+      title: 'Homepage',
+      meta: [{
+        name: 'description',
+        content: 'This is a homepage!',
+        hid: 'description'
+      }]
+    }
   },
+  async asyncData({$dataApi}){
+    return {
+      homes: (await $dataApi.getHomes()).json.hits
+    }
+  }
 };
 </script>

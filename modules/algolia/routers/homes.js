@@ -6,7 +6,7 @@ export default (apis) => {
         if (req.method === "GET" && req.url === "/user/") {
             return await getHomesByUser(req.identity.id, res)
         }
-        
+
         if (req.method === "POST") {
             if (hasBadBody(req)) {
                 return rejectHitBadRequest(res)
@@ -14,7 +14,20 @@ export default (apis) => {
             await createHome(req.identity.id, req.body, res)
             return
         }
+
+        if (req.method === "DELETE") {
+            const homeId = req.url.replace(/\//g, '')
+            return await deleteHome(req.identity, homeId, res)
+        }
         rejectHitBadRequest(res)
+    }
+
+    async function deleteHome(identity, homeId, res){
+        await Promise.all([
+            apis.homes.delete(homeId),
+            apis.user.removeHome(identity.id, homeId)
+        ])
+        sendJSON({}, res)
     }
 
     async function getHomesByUser(userId, res) {
@@ -30,10 +43,10 @@ export default (apis) => {
 
         if (!resp.ok){
             res.statusCode = 500
-            res.send()
+            res.end()
             return
         }
         await apis.user.assignHome(userId, homeId)
-        sendJSON({}, res)
+        sendJSON({ homeId }, res)
     }
 }

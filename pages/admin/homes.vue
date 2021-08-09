@@ -1,7 +1,7 @@
 <template>
   <div>
     <span v-for="home in homeList" :key="home.objectID">
-      {{ home.title }}: <button class="text-red-800">Delete</button><br />
+      {{ home.title }}: <button class="text-red-800" @click="deleteHome(home.objectID)">Delete</button><br />
     </span>
     <h2 class="text-xl bold">Add a Home</h2>
     <form class="form" @submit.prevent="onSubmit">
@@ -94,9 +94,6 @@ export default {
     this.setHomesList();
   },
   methods: {
-    imageUpdated(imageUrl, index) {
-      this.home.images[index] = imageUrl;
-    },
     changed(event) {
       const addressParts = event.detail.address_components;
       const street =
@@ -119,17 +116,32 @@ export default {
       this.home._geoloc.lat = geo.lat();
       this.home._geoloc.lng = geo.lng();
     },
+    async deleteHome(homeId){
+      await fetch(`/api/homes/${homeId}`, {
+        method: "DELETE",
+      })
+      const index = this.homeList.findIndex(obj => obj.objectID === homeId)
+      this.homeList.splice(index, 1)
+    },
     getAddressPart(parts, type) {
       return parts.find((part) => part.types.includes(type));
     },
+    imageUpdated(imageUrl, index) {
+      this.home.images[index] = imageUrl;
+    },
     async onSubmit() {
-      await fetch("/api/homes", {
+      const response = await fetch("/api/homes", {
         method: "POST",
         body: JSON.stringify(this.home),
         headers: {
           "Content-Type": "application/json",
         },
       });
+
+      this.homeList.push({
+        title: this.home.title,
+        objectID: response.json.homeId,
+      })
     },
     async setHomesList() {
       this.homeList = (await unWrap(await fetch("/api/homes/user/"))).json;

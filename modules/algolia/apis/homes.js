@@ -22,6 +22,21 @@ export default (algoliaConfig) => {
                 return getErrorResponse(error);
             }
         },
+        delete: async (homeId) => {
+            try {
+                return unWrap(
+                    await fetch(
+                        `https://${algoliaConfig.APPLICATION_ID}-dsn.algolia.net/1/indexes/nuxtbnb_homes/${homeId}`,
+                        {
+                            headers,
+                            method: "DELETE",
+                        }
+                    )
+                );
+            } catch (error) {
+                return getErrorResponse(error);
+            }
+        },
         getByUserId: async (userId) => {
             try {
                 return unWrap(

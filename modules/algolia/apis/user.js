@@ -41,6 +41,12 @@ export default (algoliaConfig) => {
             } catch (error) {
                 return getErrorResponse(error);
             }
-        }
+        },
+        removeHome: async function(userId, homeId) {
+            const payload = (await this.getById(userId)).json
+            const homes = payload.homeId.filter(id => id != homeId)
+            payload.homeId = homes
+            this.create(userId, payload)
+        },
     }
 }

@@ -37,6 +37,8 @@ export default {
         apiKey: this.$config.cloudinary.API_KEY,
         signature,
       });
+
+      this.$emit("file-uploaded", asset.secure_url);
     },
   },
 };

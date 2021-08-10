@@ -43,23 +43,26 @@ export default {
   publicRuntimeConfig: {
     auth: {
       cookieName: "idToken",
-      clientId: "212096474408-r38fnhqopkthssdvs1gga1hq238u32pp.apps.googleusercontent.com",
+      clientId: process.env.AUTH_CLIENT_ID,
     },
     algolia: {
-      APPLICATION_ID: "T2OKKX09II",
-      API_KEY: "1958c90625c59344dc055a3dddf1a550"
+      APPLICATION_ID: process.env.ALGOLIA_APPLICATION_ID,
+      API_KEY: process.env.ALGOLIA_READ_API_KEY
     },
     cloudinary: {
-      API_KEY: "237921354725786",
+      API_KEY: process.env.CLOUDINARY_API_KEY,
+    },
+    googleMaps: {
+      API_KEY: process.env.GOOGLE_MAPS_KEY,
     }
   },
   privateRuntimeConfig: {
     algolia: {
-      APPLICATION_ID: "T2OKKX09II",
-      API_KEY: "55abaa55819243489563ecbbdbdcf036",
+      APPLICATION_ID: process.env.ALGOLIA_APPLICATION_ID,
+      API_KEY: process.env.ALGOLIA_WRITE_API_KEY,
     },
     cloudinary: {
-      API_SECRET: "aVrfGElM15G2qzfLtmqpUaVFe-0",
+      API_SECRET: process.env.CLOUDINARY_API_SECRET,
     }
   },
 }

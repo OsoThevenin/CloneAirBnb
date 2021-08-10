@@ -22,11 +22,13 @@ export default {
 		'~/plugins/dataApi',
 		'~/plugins/auth.client',
 		'~/plugins/vCalendar.client',
+		'~/plugins/stripe.client',
 	],
 	modules: [
 		'~/modules/auth',
 		'~/modules/algolia',
 		'~/modules/cloudinary',
+		'~/modules/stripe',
 		'@nuxtjs/cloudinary',
 	],
 	buildModules: ['@nuxtjs/tailwindcss', '@nuxt/image'],
@@ -60,6 +62,9 @@ export default {
 		googleMaps: {
 			API_KEY: process.env.GOOGLE_MAPS_KEY,
 		},
+		stripe: {
+			PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
+		}
 	},
 	privateRuntimeConfig: {
 		algolia: {
@@ -69,5 +74,8 @@ export default {
 		cloudinary: {
 			API_SECRET: process.env.CLOUDINARY_API_SECRET,
 		},
+		stripe: {
+			SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+		}
 	},
 }

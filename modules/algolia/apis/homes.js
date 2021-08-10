@@ -1,5 +1,5 @@
 import fetch from 'node-fetch'
-import { getHeaders } from '../helpers'
+import { getHeaders } from '../../helpers'
 import { unWrap, getErrorResponse } from '../../../utils/fetchUtils'
 
 export default (algoliaConfig) => {
@@ -19,7 +19,7 @@ export default (algoliaConfig) => {
 
 				delete payload.availabilityRanges
 				payload.availability = availability
-                
+
 				return unWrap(
 					await fetch(
 						`https://${algoliaConfig.APPLICATION_ID}-dsn.algolia.net/1/indexes/nuxtbnb_homes/${homeId}`,
@@ -42,6 +42,20 @@ export default (algoliaConfig) => {
 						{
 							headers,
 							method: 'DELETE',
+						}
+					)
+				)
+			} catch (error) {
+				return getErrorResponse(error)
+			}
+		},
+		get: async (homeId) => {
+			try {
+				return unWrap(
+					await fetch(
+						`https://${algoliaConfig.APPLICATION_ID}-dsn.algolia.net/1/indexes/nuxtbnb_homes/${homeId}`,
+						{
+							headers,
 						}
 					)
 				)

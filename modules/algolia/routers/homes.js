@@ -1,52 +1,52 @@
-import { rejectHitBadRequest, hasBadBody, sendJSON } from '../helpers'
+import { rejectHitBadRequest, hasBadBody, sendJSON } from '../../helpers'
 import { v4 as uuidv4 } from 'uuid'
 
 export default (apis) => {
-    return async (req, res) => {
-        if (req.method === "GET" && req.url === "/user/") {
-            return await getHomesByUser(req.identity.id, res)
-        }
+	return async (req, res) => {
+		if (req.method === 'GET' && req.url === '/user/') {
+			return await getHomesByUser(req.identity.id, res)
+		}
 
-        if (req.method === "POST") {
-            if (hasBadBody(req)) {
-                return rejectHitBadRequest(res)
-            }
-            await createHome(req.identity.id, req.body, res)
-            return
-        }
+		if (req.method === 'POST') {
+			if (hasBadBody(req)) {
+				return rejectHitBadRequest(res)
+			}
+			await createHome(req.identity.id, req.body, res)
+			return
+		}
 
-        if (req.method === "DELETE") {
-            const homeId = req.url.replace(/\//g, '')
-            return await deleteHome(req.identity, homeId, res)
-        }
-        rejectHitBadRequest(res)
-    }
+		if (req.method === 'DELETE') {
+			const homeId = req.url.replace(/\//g, '')
+			return await deleteHome(req.identity, homeId, res)
+		}
+		rejectHitBadRequest(res)
+	}
 
-    async function deleteHome(identity, homeId, res){
-        await Promise.all([
-            apis.homes.delete(homeId),
-            apis.user.removeHome(identity.id, homeId)
-        ])
-        sendJSON({}, res)
-    }
+	async function deleteHome(identity, homeId, res) {
+		await Promise.all([
+			apis.homes.delete(homeId),
+			apis.user.removeHome(identity.id, homeId),
+		])
+		sendJSON({}, res)
+	}
 
-    async function getHomesByUser(userId, res) {
-        const payload = (await apis.homes.getByUserId(userId)).json.hits
-        sendJSON(payload, res)
-    }
+	async function getHomesByUser(userId, res) {
+		const payload = (await apis.homes.getByUserId(userId)).json.hits
+		sendJSON(payload, res)
+	}
 
-    async function createHome(userId, body, res) {
-        const homeId = uuidv4()
-        const payload = { ...body, reviewCount: 0, reviewValue: 0, userId }
+	async function createHome(userId, body, res) {
+		const homeId = uuidv4()
+		const payload = { ...body, reviewCount: 0, reviewValue: 0, userId }
 
-        const resp = await apis.homes.create(homeId, payload)
+		const resp = await apis.homes.create(homeId, payload)
 
-        if (!resp.ok){
-            res.statusCode = 500
-            res.end()
-            return
-        }
-        await apis.user.assignHome(userId, homeId)
-        sendJSON({ homeId }, res)
-    }
+		if (!resp.ok) {
+			res.statusCode = 500
+			res.end()
+			return
+		}
+		await apis.user.assignHome(userId, homeId)
+		sendJSON({ homeId }, res)
+	}
 }
